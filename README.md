@@ -12,7 +12,7 @@ Web Programming (020WBPES3) capstone project, USJ / ESIB:
 | | URL |
 |---|---|
 | Front end (Vercel) | https://fixit-capstone.vercel.app |
-| API (Render) | https://fixit-api.onrender.com/api/health |
+| API (Render) | https://fixit-api-2zql.onrender.com/api/health |
 
 > The API runs on Render's free plan, which sleeps after 15 minutes without traffic. The first request after a pause can take up to a minute.
 
