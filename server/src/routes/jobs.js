@@ -56,7 +56,7 @@ router.post('/', requireRole('customer'), async (req, res) => {
 // GET /api/jobs/mine  - customers see the jobs they booked, pros see the jobs they accepted
 router.get('/mine', async (req, res) => {
   const where = req.user.role === 'pro' ? { proId: req.user.id } : { customerId: req.user.id };
-  const jobs = await prisma.job.findMany({ where, include: jobDetails, orderBy: { scheduledAt: 'asc' } });
+  const jobs = await prisma.job.findMany({ where, include: jobDetails, orderBy: { createdAt: 'desc' } });
   res.json({ count: jobs.length, data: jobs });
 });
 
