@@ -1,20 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
 const cookieParser = require('cookie-parser');
 const authRouter = require('./routes/auth');
 const servicesRouter = require('./routes/services');
 const jobsRouter = require('./routes/jobs');
 const prosRouter = require('./routes/pros');
 const { notFound, errorHandler } = require('./middleware/errors');
-
-// Max 20 login/signup attempts per IP every 15 minutes (slows down password guessing)
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  limit: 20,
-  message: { error: { message: 'Too many attempts, please try again in 15 minutes' } },
-});
 
 // Builds the Express app (server.js starts it, the tests use it directly)
 function createApp() {
@@ -33,7 +25,7 @@ function createApp() {
     res.json({ status: 'ok' });
   });
 
-  app.use('/api/auth', authLimiter, authRouter);
+  app.use('/api/auth', authRouter);
   app.use('/api/services', servicesRouter);
   app.use('/api/jobs', jobsRouter);
   app.use('/api/pros', prosRouter);

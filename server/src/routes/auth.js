@@ -1,12 +1,21 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const rateLimit = require('express-rate-limit');
 const prisma = require('../db');
 const { validateSignup, validateLogin } = require('../validation');
 const { HttpError } = require('../middleware/errors');
 const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
+
+// Max 20 login/signup attempts per IP every 15 minutes (slows down password guessing).
+// Only on login and signup: /me runs on every page load and must not be limited.
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  message: { error: { message: 'Too many attempts, please try again in 15 minutes' } },
+});
 
 const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
 
@@ -35,7 +44,7 @@ function sendToken(res, user) {
 }
 
 // POST /api/auth/signup
-router.post('/signup', async (req, res) => {
+router.post('/signup', loginLimiter, async (req, res) => {
   const { errors, value } = validateSignup(req.body);
   if (errors.length) throw new HttpError(400, 'Validation failed', errors);
 
@@ -61,7 +70,7 @@ router.post('/signup', async (req, res) => {
 });
 
 // POST /api/auth/login
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
   const { errors, value } = validateLogin(req.body);
   if (errors.length) throw new HttpError(400, 'Validation failed', errors);
 

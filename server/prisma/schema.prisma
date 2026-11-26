@@ -80,6 +80,10 @@ model Job {
   service  Service @relation(fields: [serviceId], references: [id])
   review   Review?
 
+  // indexes for the queries we run all the time (my jobs, open jobs)
+  @@index([customerId])
+  @@index([proId])
+  @@index([status])
   @@map("jobs")
 }
 
