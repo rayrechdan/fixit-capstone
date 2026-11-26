@@ -17,6 +17,12 @@ export async function api(path, { method = 'GET', body } = {}) {
   const res = await fetch(`${BASE}/api${path}`, options)
   const data = await res.json().catch(() => ({}))
 
+  // Session expired or cookie missing: tell the app to log out (AuthContext listens).
+  // Not for /auth/me (normal when logged out) and not for /auth/login (wrong password).
+  if (res.status === 401 && path !== '/auth/me' && path !== '/auth/login') {
+    window.dispatchEvent(new Event('auth:expired'))
+  }
+
   if (!res.ok) {
     const error = new Error(data.error?.message || 'Something went wrong, please try again')
     error.status = res.status

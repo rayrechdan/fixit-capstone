@@ -17,7 +17,7 @@ function createApp() {
 
   app.use(helmet()); // security headers
   app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
-  app.use(express.json({ limit: '100kb' }));
+  app.use(express.json({ limit: '10kb' }) // cap the body size);
   app.use(cookieParser());
 
   // Test route: used to check that the server is up

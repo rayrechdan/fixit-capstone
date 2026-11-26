@@ -16,6 +16,14 @@ export function AuthProvider({ children }) {
       .finally(() => setLoading(false))
   }, [])
 
+  // If any request comes back 401 (see api.js), forget the user:
+  // ProtectedRoute then sends them to the login page
+  useEffect(() => {
+    const handleExpired = () => setUser(null)
+    window.addEventListener('auth:expired', handleExpired)
+    return () => window.removeEventListener('auth:expired', handleExpired) // cleanup
+  }, [])
+
   async function login(email, password) {
     const data = await api('/auth/login', { method: 'POST', body: { email, password } })
     setUser(data.user)
