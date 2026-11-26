@@ -1,0 +1,30 @@
+:root {
+  --orange: #f26b21;
+  --ink: #0e1a2b;
+  --bg: #f5f6f8;
+  font-family: 'IBM Plex Sans', Arial, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+}
+
+.navbar {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: white;
+}
+
+.logo {
+  font-weight: 800;
+  color: var(--orange);
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1rem;
+}
