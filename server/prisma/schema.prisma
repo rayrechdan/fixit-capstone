@@ -1,0 +1,96 @@
+// Fixit database schema (PostgreSQL)
+// 1 customer -> many jobs, 1 pro -> many jobs, 1 service -> many jobs, 1 job -> 0 or 1 review
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  customer
+  pro
+  admin
+}
+
+enum Trade {
+  plumbing
+  electrical
+  ac
+  carpentry
+  painting
+}
+
+enum JobStatus {
+  requested
+  accepted
+  on_the_way
+  done
+  cancelled
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  role         Role     @default(customer)
+  trade        Trade?
+  phone        String?
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  customerJobs Job[] @relation("CustomerJobs")
+  proJobs      Job[] @relation("ProJobs")
+
+  @@map("users")
+}
+
+model Service {
+  id            Int    @id @default(autoincrement())
+  category      Trade
+  name          String
+  description   String
+  fixedPriceUsd Int    @map("fixed_price_usd")
+  estMinutes    Int    @map("est_minutes")
+
+  jobs Job[]
+
+  @@map("services")
+}
+
+model Job {
+  id          Int       @id @default(autoincrement())
+  customerId  Int       @map("customer_id")
+  proId       Int?      @map("pro_id")
+  serviceId   Int       @map("service_id")
+  address     String
+  lat         Float
+  lng         Float
+  scheduledAt DateTime  @map("scheduled_at")
+  description String
+  priceUsd    Int       @map("price_usd")
+  status      JobStatus @default(requested)
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  customer User    @relation("CustomerJobs", fields: [customerId], references: [id])
+  pro      User?   @relation("ProJobs", fields: [proId], references: [id])
+  service  Service @relation(fields: [serviceId], references: [id])
+  review   Review?
+
+  @@map("jobs")
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  jobId     Int      @unique @map("job_id")
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  job Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
+}
