@@ -9,7 +9,8 @@
     "build": "prisma generate && prisma migrate deploy",
     "migrate": "prisma migrate dev",
     "seed": "node prisma/seed.js",
-    "test": "jest"
+    "test": "jest",
+    "db": "prisma studio"
   },
   "author": "Raymond Rechdan (240647), Ralph Assi (242320)",
   "license": "MIT",

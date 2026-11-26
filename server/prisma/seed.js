@@ -47,9 +47,11 @@ async function main() {
 
   await prisma.service.createMany({ data: services });
 
-  const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 10);
   const created = {};
   for (const u of users) {
+    // hash separately for each user: bcrypt picks a new random salt every time,
+    // so the same demo password gives a different hash for each account
+    const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 10);
     created[u.email] = await prisma.user.create({ data: { ...u, passwordHash } });
   }
 
