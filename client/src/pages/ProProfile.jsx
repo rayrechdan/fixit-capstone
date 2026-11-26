@@ -40,7 +40,7 @@ function ProProfile() {
         ) : (
           <p className="muted">No reviews yet</p>
         )}
-        <p className="muted">{pro.jobsDone} jobs done on Fixit</p>
+        <p className="muted">{pro.jobsDone} job{pro.jobsDone === 1 ? "" : "s"} done on Fixit</p>
       </section>
 
       <h2>Reviews</h2>
