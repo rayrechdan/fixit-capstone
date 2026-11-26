@@ -1,0 +1,26 @@
+# Runs the back-end and front-end tests on every push
+name: Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Back-end tests (Jest + Supertest)
+        working-directory: server
+        run: |
+          npm ci
+          npx prisma generate
+          npm test
+
+      - name: Front-end tests (Vitest)
+        working-directory: client
+        run: |
+          npm ci
+          npm test
